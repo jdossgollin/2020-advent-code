@@ -11,8 +11,7 @@ end
 # parse the input file into LineEntry types
 function parse_line(line::String)
     segments = split(line, " ")
-    lb = parse(Int, split(segments[1], "-")[1])
-    ub = parse(Int, split(segments[1], "-")[2])
+    lb, ub = parse.(Int, split(segments[1], "-")[1:2])
     letter = split(segments[2], ":")[1]
     password = segments[3]
     return LineEntry(lb, ub, letter, password)
