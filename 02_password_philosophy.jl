@@ -8,13 +8,11 @@ struct LineEntry
     password::String
 end
 
-# parse the input file into LineEntry types
+# parse the input file into LineEntry types using regex
 function parse_line(line::String)
-    segments = split(line, " ")
-    lb, ub = parse.(Int, split(segments[1], "-")[1:2])
-    letter = split(segments[2], ":")[1]
-    password = segments[3]
-    return LineEntry(lb, ub, letter, password)
+    expr = r"(\d+)-(\d+) (\w): (\w+)"
+    m = match(expr, line)
+    return LineEntry(parse(Int, m[1]), parse(Int, m[2]), m[3], m[4])
 end
 
 function parse_file(fname)
