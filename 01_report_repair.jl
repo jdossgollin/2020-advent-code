@@ -7,6 +7,7 @@ end
 
 # which two entries sum to 2020?
 function solve_01(input)
+    N = length(input)
     for i = 1:N
         for j = 1:N
             if input[i] + input[j] == 2020
@@ -21,6 +22,7 @@ println("The answer to part 1 for day 01 is\n\t$solution_01")
 
 # on to part three! which _three_ entries sum to 2020?
 function solve_02(input)
+    N = length(input)
     for i = 1:N
         for j = 1:N
             for k = 1:N
