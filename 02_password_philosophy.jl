@@ -10,7 +10,7 @@ end
 
 # parse the input file into LineEntry types using regex
 function parse_line(line::String)
-    expr = r"(\d+)-(\d+) (\w): (\w+)"
+    expr = r"(\d+)-(\d+) (.): (.+)"
     m = match(expr, line)
     return LineEntry(parse(Int, m[1]), parse(Int, m[2]), m[3], m[4])
 end
