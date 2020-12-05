@@ -2,17 +2,17 @@
 
 """Get the row from a given string -- this is just binary"""
 function get_row(row_str::String)
-    row_str = replace(replace(row_str, "B" => 1), "F" => 0) # can't do multiple replace
+    row_str = String(replace(collect(row_str), 'B' => '1', 'F' => '0'))
     return parse(Int, row_str; base=2)
 end
 @assert get_row("FBFBBFF") == 44 # example val given in problem
 
 """Get the column from a given string -- this is just binary"""
 function get_col(col_str::String)
-    col_str = replace(replace(col_str, "R" => 1), "L" => 0) # can't do multiple replace
+    col_str = String(replace(collect(col_str), 'R' => '1', 'L' => '0'))
     return parse(Int, col_str; base=2)
 end
-@assert get_col("RLR") == 5 # example val given in problem
+@assert get_col("RLR") == 5
 
 struct BoardingPass
     row::Int
@@ -21,7 +21,7 @@ struct BoardingPass
 end
 function BoardingPass(line::String)
     row = get_row(line[1:7])
-    col = get_col(line[8:10])
+    col = get_col(line[8:end])
     id = 8 * row + col
     return BoardingPass(row, col, id)
 end
