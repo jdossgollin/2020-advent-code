@@ -1,12 +1,9 @@
-# Advent of Code 2020
+# SPOILER ALERT
 
-**SPOILER ALERT**
+## My Solutions for Advent of Code 2020
 
 These are my solutions for the 2020 [Advent of Code](https://adventofcode.com/).
 I'm trying to learn Julia and this is a fun way to develop my skills.
-Solutions may not be the best possible way to solve the problems.
-
-I may also run out of time later this month.
 
 ## Structure
 
