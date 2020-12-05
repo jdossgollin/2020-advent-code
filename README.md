@@ -5,6 +5,8 @@
 These are my solutions for the 2020 [Advent of Code](https://adventofcode.com/).
 I'm trying to learn Julia and this is a fun way to develop my skills.
 
+All solutions are my own, but I'm also learning a lot by checking out more performant solutions on Zulip at https://julialang.zulipchat.com/#narrow/stream/265470-advent-of-code.
+
 ## Structure
 
 * This directory contains scripts; one script corresponds to the puzzle for a single day
