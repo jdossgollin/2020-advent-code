@@ -1,33 +1,15 @@
 # https://adventofcode.com/2020/day/6
 
-# every `response` is a set of characters, where one character corresponds to a question answered `yes`
-const response = Set{Char}
-
-# every `group` consists of one or more responses
-const group = Vector{response}
-
+"""Get a `Vector` of `Vector` of `SubString`s"""
 function parse_input(fname::String)
-    groups = Vector{group}()
-    group_response = group()
-    open(fname, "r") do datafile
-        for line in eachline(datafile)
-            if length(line) == 0 # it's a blank line«
-                push!(groups, group_response)
-                group_response = group()
-            else
-                push!(group_response, Set(line))
-            end
-        end
-    end
-    push!(groups, group_response)
-    return groups
+    return read(fname, String) |> str -> split(str, "\n\n") .|> split
 end
 
-function solve1(input::Vector{group})
+function solve1(input)
     mapreduce(x -> length(union(x...)), +, input)
 end
 
-function solve2(input::Vector{group})
+function solve2(input)
     mapreduce(x -> length(intersect(x...)), +, input)
 end
 
