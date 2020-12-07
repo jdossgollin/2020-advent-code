@@ -2,105 +2,87 @@
 
 using DataStructures: Stack
 
+const Contents = Dict{String,Int}
+const RuleMap = Dict{SubString{String},Contents}
+
 """This function bakes in the assumption that all colors have two words!"""
 function parse_line(line::String)
     bag_color, content_str = split(line, " bags contain ")
     if content_str == "no other bags."
-        contents = Dict()
+        contents = Contents()
     else
         expr = r"(\d+) (\w+) (\w+) bag"
         content_list = content_str |> x -> split(x, ".")[1] |> x -> split(x, ",") .|> lstrip .|> x -> match(expr, x).captures |> x -> (parse(Int, x[1]), x[2] * " " * x[3])
-        contents = Dict(color => quantity for (quantity, color) in content_list)
+        contents = Contents(color => quantity for (quantity, color) in content_list)
     end
-    return Dict(bag_color => contents)
+    return RuleMap(bag_color => contents)
 end
 
-"""A data structure"""
-struct BaggageRule
-    colors::Vector{String}
-    allowed::Matrix{Int}
-    N::Int
-end
-function BaggageRule(fname::String)
-    
-    # read in the data as dictis
-    contents = open(fname, "r") do datafile
+"""Read the inputs"""
+function parse_file(fname::String)::RuleMap
+    open(fname, "r") do datafile
         merge([parse_line(line) for line in eachline(datafile)]...)
     end
-    colors = Dict(k => i for (i, (k, _)) in enumerate(contents)) # all the naes
-    
-    # convert to matrix format
-    content_mtx = zeros(Int, length(colors), length(colors)) # initialization
-    for (color_from, idx_from) in colors
-        for (color_to, n_allowed) in contents[color_from]
-            content_mtx[idx_from, colors[color_to]] += n_allowed
-        end
-    end
-    return BaggageRule(collect(keys(colors)), content_mtx, length(colors))
 end
 
-"""Finds all the nodes that have a path to the target node"""
-function is_reachable(rule, start_idx::Int, target_idx::Int)
+"""Finds all the nodes that have a path to the target node using Breadth First Search"""
+function is_reachable(rule::RuleMap, start::AbstractString, target::AbstractString)
 
-    visited = repeat([false], rule.N) # track which nodes we have visited
-    queue = Stack{Int}() # Create a queue for BFS 
+    visited = Dict(key => false for key in keys(rule)) # track which nodes we have visited
+    queue = Stack{String}() # the nodes we will check 
+    push!(queue, start) # add the start
+    visited[start] = true
 
-    # Mark the source node as visited and enqueue it
-    push!(queue, start_idx)
-    visited[start_idx] = true
-
-    while !isempty(queue)
-
-        n = pop!(queue)
-        if n == target_idx
+     while !isempty(queue)
+        color = pop!(queue)
+        if color == target
             return true # we found a path! all done
         end
-        for i in findall(rule.allowed[n, :] .> 0)
-            if !visited[i]
-                push!(queue, i) 
-                visited[i] = true
+        for c in keys(rule[color])
+            if !visited[c]
+                push!(queue, c) 
+                visited[c] = true
             end
         end
     end
     return false # if we haven't found a path, there is none
 end
 
-function solve1(rule::BaggageRule; target_color="shiny gold")
-    target_idx = findfirst(target_color .== rule.colors)
-    candidates = filter(x -> x !== target_idx, 1:rule.N)
-    return mapreduce(i -> is_reachable(rule, i, target_idx), +, candidates)
+function solve1(rule::RuleMap; target="shiny gold")
+    candidates = [key for key in String.(keys(rule)) if key !== target_color]
+    return mapreduce(color -> is_reachable(rule, color, target_color), +, candidates)
 end
 
-function bag_contents(start_idx::Int, rule::BaggageRule)
+function bag_contents(rule::RuleMap, start::AbstractString)
     
-    queue = Stack{Int}() # Create a queue of bags to 'unpack'
-    push!(queue, start_idx)
+    queue = Stack{String}() # Create a queue of bags to 'unpack'
+    push!(queue, start)
     n_bags = 0
 
     while !isempty(queue)
-        n = pop!(queue)
+        color = pop!(queue)
         n_bags += 1
-        contents = findall(rule.allowed[n, :] .> 0)
-        for cidx in filter(x -> x > 0, contents)
-            contents = repeat([cidx], rule.allowed[n, cidx])
-            push!(queue, contents...)
+        contents = keys(rule[color])
+        for c in contents
+            push!(queue, repeat([c], rule[color][c])...)
         end
     end
-
+    
     return n_bags # if we haven't found a path, t
 end
-function solve2(rule::BaggageRule; target_color="shiny gold")
-    target_idx = findfirst(target_color .== rule.colors)
-    return bag_contents(target_idx, rule) - 1
+
+function solve2(rule::RuleMap; target="shiny gold")
+    return bag_contents(rule, target) - 1 # don't count itself
 end
 
 function main()
-    demo_rule = BaggageRule("demo/07.txt")
+    
+    demo_rule = parse_file("demo/07.txt")
     @assert solve1(demo_rule) == 4
-    demo2 = BaggageRule("Demo/07b.txt")
+    demo2 = parse_file("Demo/07b.txt")
     @assert solve2(demo2) == 126
 
-    rule = BaggageRule("inputs/07.txt")
+    rule = parse_file("inputs/07.txt")
     sol1 = solve1(rule)
     sol2 = solve2(rule)
 
