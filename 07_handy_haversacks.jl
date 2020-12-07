@@ -2,8 +2,8 @@
 
 using DataStructures: Stack
 
-const Contents = Dict{String,Int}
-const RuleMap = Dict{SubString{String},Contents}
+const Contents = Dict{AbstractString,Int}
+const RuleMap = Dict{AbstractString,Contents}
 
 """This function bakes in the assumption that all colors have two words!"""
 function parse_line(line::String)
@@ -49,8 +49,8 @@ function is_reachable(rule::RuleMap, start::AbstractString, target::AbstractStri
 end
 
 function solve1(rule::RuleMap; target="shiny gold")
-    candidates = [key for key in String.(keys(rule)) if key !== target_color]
-    return mapreduce(color -> is_reachable(rule, color, target_color), +, candidates)
+    candidates = [key for key in String.(keys(rule)) if key !== target]
+    return mapreduce(color -> is_reachable(rule, color, target), +, candidates)
 end
 
 function bag_contents(rule::RuleMap, start::AbstractString)
