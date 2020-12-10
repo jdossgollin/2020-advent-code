@@ -1,18 +1,18 @@
 # https://adventofcode.com/2020/day/9
 
-Input = Vector{Int}
+const Input = Vector{Int}
 
 """The data structure for our running cross-sums will keep track of the last
 n values and the values of their cross sums
 """
 mutable struct RunningCrossSum
     n::Int
-    s::Vector{Int}
+    s::Input
     cross_sums::Matrix{Int}
 end
 
 """Define a RunningCrossSum from a Vector of initial values"""
-function RunningCrossSum(inits::Vector{Int})
+function RunningCrossSum(inits::Input)
     n = length(inits)
     cross_sums = zeros(Int, n, n)
     for i in 1:n
@@ -54,16 +54,15 @@ function solve1(input::Input, n::Int)::Int
 end
 
 function solve2(input::Input, target::Int)::Int
-    N = length(input)
-    for i_start in 1:N
+    for lo in 1:length(input)
         running_sum = 0
-        i_stop = i_start
+        hi = lo
         while running_sum < target
-            running_sum += input[i_stop]
+            running_sum += input[hi]
             if running_sum == target
-                return minimum(input[i_start:i_stop]) + maximum(input[i_start:i_stop])
+                return minimum(input[lo:hi]) + maximum(input[lo:hi])
             end
-            i_stop += 1
+            hi += 1
         end
     end
     return -1
@@ -78,7 +77,6 @@ function main()
     sol1 = solve1(input, 25)
     sol2 = solve2(input, sol1)
     @show sol1, sol2
-
 end
 
 main();
