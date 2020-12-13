@@ -1,5 +1,4 @@
 # https://adventofcode.com/2020/day/13
-using Pkg; Pkg.activate(".")
 
 function parse_file(fname::String)
     earliest_time, departures = readlines(fname)
@@ -18,8 +17,6 @@ function solve1(fname::String)
     best_id = bus_ids[best_idx]
     return best_id  * wait_time
 end
-
-fname = "demo/13.txt"
 
 function solve2(fname::String)
     earliest_time, all_bus_ids = parse_file(fname)
@@ -45,5 +42,4 @@ function main()
     sol2 = solve2("inputs/13.txt") # 556100168221141
     @show sol1, sol2
 end
-
 main();
