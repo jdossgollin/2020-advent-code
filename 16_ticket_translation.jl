@@ -34,7 +34,6 @@ function solve1(fname::String)
     return invalid_sum
 end
 
-fname = "inputs/16.txt"
 function parse_ticket2(fname::String)
     valid_range, ticket, nearby_tickets = parse_input(fname)
     nearby_tickets = nearby_tickets[findall([all(is_valid(t, valid_range)) for t in nearby_tickets])]
